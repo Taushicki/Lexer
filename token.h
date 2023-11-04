@@ -2,10 +2,8 @@
 #include <iostream>
 #include <string>
 
-
 using namespace std;
 
-// Перечисления типов токенов
 enum class token_type {
     IDENTIFIER,
 
@@ -88,7 +86,6 @@ enum class token_type {
     DIV_ASSIGN, // /=
 
     // Function
-    FUNCTION,
     RETURN,
 
     // Other symbols
@@ -119,8 +116,8 @@ enum class token_type {
 class token
 {
 public:
-    token_type type;    // Тип токена
-    string lexeme;      // Лексеама
+    token_type type;
+    string lexeme;
 
 public:
     explicit token(const string& lexeme) {
@@ -134,7 +131,7 @@ public:
     }
 
 private:
-    // Метод определения типа токена
+
     static token_type which_token_type(const string& lexeme) {
         if (lexeme == "const")
             return token_type::CONST;
@@ -303,7 +300,6 @@ private:
         return token_type::IDENTIFIER;
     }
 
-    // Конвертация типа токена в строку
     static string token_type_to_string(token_type type) {
         switch (type)
         {
@@ -581,7 +577,6 @@ private:
         }
     }
 
-    // Методы проверки лексемы на строку, символ, число, число с плавабщей точкой
     static bool is_string(const string& current_lexeme) {
         return current_lexeme.front() == '"' && current_lexeme.back() == '"';
     }

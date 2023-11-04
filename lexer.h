@@ -9,17 +9,22 @@ class lexer {
 
 private:
 	
-	string file_path;		// Путь к файлу
-	string code;			// Строка с кодом из файла
+	string file_path;
+	string code;	
 
-	vector<token> tokens;	// Вектор с токенами
+	vector<token> tokens;
+
+	size_t current_token_index;
 
 public:
 
 	explicit lexer(const string& file_path) {
+		this->current_token_index = 0;
 		this->file_path = file_path;
 		this->open();
 		this->split();
+		this->merge();
+		this->check();
 	}
 
 	void print() {
@@ -30,10 +35,20 @@ public:
 		}
 	}
 
-	
+	token current_token() {
+		return tokens[current_token_index];
+	}
+
+	token_type current_token_type() {
+		return current_token().type;
+	}
+
+	void next_token() {
+		current_token_index++;
+	}
 
 private:
-	// Метод проверки на состовные оператор
+
 	static bool is_complex_operator(char symbol1, char symbol2) {
 		switch (symbol1)
 		{
@@ -77,7 +92,7 @@ private:
 			return false;
 		}
 	}
-	//Метод проверки на блок комментария
+
 	static bool is_comment_block(char symbol1, char symbol2) {
 		switch (symbol1) {
 		case '/':
@@ -92,7 +107,7 @@ private:
 			return false;
 		}
 	}
-	// Метод проверки на разделительный символ
+
 	static bool is_separete_symbol(char symbol) {
 		return  symbol == ':' || symbol == ';' ||
 			symbol == ',' || symbol == '.' ||
@@ -111,40 +126,25 @@ private:
 			symbol == '\r' || symbol == '\n' ||
 			symbol == '#' || symbol == '\t';
 	}
-	// Метод проверки на char
-	// Метод проверки на string
 
-	/*static bool is_comment_string(char symbol1, char symbol2) {
-		if (symbol1 == '/') {
-			return symbol2 == '/';
-		}
-		else {
-			false;
-		}
-	}*/
-
-	// Открытие файла
 	void open() {
 		ifstream in(file_path, ios::binary);
 
-		// Ошибка на этапе лексического анализа. Файл не найден 
 		if (!in.is_open()) {
 			error_handle::raise(error_handle_type::LEXER, "File not found!");
 		}
 
-		// Узнаём размер файл и переводим указатель в начало 
 		size_t size = in.seekg(0, ios::end).tellg();
 		in.seekg(0);
 
-		// Считываем файл в переменную 'code'
 		code.resize(size);
 		in.read(&code[0], size);
 		in.close();
 	}
-	// Метод разбития строки 'code'
+
 	void split() {
 		
-		string temp_lexeme;		// Временная переменная для хранения лексемы
+		string temp_lexeme;
 
 		for (const auto& symbol : code) {
 
@@ -167,10 +167,9 @@ private:
 				temp_lexeme += symbol;
 			}
 		}
-		merge();
+		
 	}
 
-	// Перепроверяем токены на наличие состовных операторов, чисел с плавающей точкой, комментариев, char'ов, строк
 	void merge() {
 
 		vector<token> temp_tokens;
@@ -265,17 +264,40 @@ private:
 
 			}
 
-			/*if (index + 1 < tokens.size() && is_comment_string(tokens[index].lexeme[0], tokens[index + 1].lexeme[0])) {
-				while (tokens[index].lexeme[0] != '\n' || tokens[index].lexeme[0] != '\r') {
-					index++;
-				}
-				continue;
-			}*/
 			temp_tokens.push_back(tokens[index]);
 		}
 
 		tokens = temp_tokens;
 		temp_tokens.clear();
+	}
+
+	void check() {
+
+		for (auto& token : tokens) {
+
+			if (token.type == token_type::IDENTIFIER) {
+
+				if (!is_correct_identifier(token.lexeme)) {
+
+					error_handle::raise(error_handle_type::LEXER, "Invalied identifier!");
+				}
+			}
+		}
+	}
+
+	static bool is_correct_identifier(const string& lexeme) {
+
+		if (!isalpha(lexeme[0]) && lexeme[0] != '_') {
+			return false;
+		}
+		
+		for (char symbol : lexeme)
+		{
+			if (symbol != '_' && !isalpha(symbol) && !isdigit(symbol)) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	

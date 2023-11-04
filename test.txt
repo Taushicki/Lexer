@@ -1,11 +1,8 @@
-#include <string>
 
-using namespace std;
-
-int print() {
+int main() {
 
 	/*Привет мой дорогой друг*/
-
+	int new_int1 = 10;
 	int new_int = 1;
 	new_int += 1;
 	double new_double = 2.0;
