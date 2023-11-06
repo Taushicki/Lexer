@@ -124,7 +124,7 @@ private:
 			symbol == '%' || symbol == '\\' ||
 			symbol == '~' || symbol == ' ' ||
 			symbol == '\r' || symbol == '\n' ||
-			symbol == '#' || symbol == '\t';
+			/*symbol == '#' || */symbol == '\t';
 	}
 
 	void open() {

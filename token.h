@@ -87,6 +87,7 @@ enum class token_type {
 
     // Function
     RETURN,
+    FUNCTION,
 
     // Other symbols
     SEMICOLON, // ;
