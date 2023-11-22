@@ -22,6 +22,9 @@
     <Filter Include="Файлы заголовков\lexer\token">
       <UniqueIdentifier>{64a07ce1-fa48-4f49-943b-cb4e8e76ef31}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Файлы заголовков\parser">
+      <UniqueIdentifier>{14dc61cd-2ee0-4873-8e66-b9e616be361d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="error_handle.h">
@@ -32,6 +35,9 @@
     </ClInclude>
     <ClInclude Include="token.h">
       <Filter>Файлы заголовков\lexer\token</Filter>
+    </ClInclude>
+    <ClInclude Include="parser.h">
+      <Filter>Файлы заголовков\parser</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

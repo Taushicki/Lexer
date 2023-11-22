@@ -17,6 +17,10 @@ private:
 	size_t current_token_index;
 
 public:
+	token get_tokens() {
+		return 
+	}
+
 
 	explicit lexer(const string& file_path) {
 		this->current_token_index = 0;

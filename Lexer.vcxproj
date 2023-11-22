@@ -141,6 +141,7 @@
   <ItemGroup>
     <ClInclude Include="error_handle.h" />
     <ClInclude Include="lexer.h" />
+    <ClInclude Include="parser.h" />
     <ClInclude Include="token.h" />
   </ItemGroup>
   <ItemGroup>
