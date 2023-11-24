@@ -7,5 +7,5 @@ int print() {
 	/*Привет мой дорогой друг*/
 
 	int new_int = 1;
-	if
+	return 0;
 }

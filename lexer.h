@@ -17,9 +17,7 @@ private:
 	size_t current_token_index;
 
 public:
-	token get_tokens() {
-		return 
-	}
+
 
 
 	explicit lexer(const string& file_path) {
@@ -29,6 +27,10 @@ public:
 		this->split();
 		this->merge();
 		this->check();
+	}
+
+	vector<token> get_tokens() {
+		return tokens;
 	}
 
 	void print() {

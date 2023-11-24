@@ -25,6 +25,9 @@
     <Filter Include="Файлы заголовков\parser">
       <UniqueIdentifier>{14dc61cd-2ee0-4873-8e66-b9e616be361d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Файлы заголовков\parser\atsnode">
+      <UniqueIdentifier>{eeedcb36-9394-4faa-bbfa-19cb066ff6d9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="error_handle.h">
@@ -39,6 +42,9 @@
     <ClInclude Include="parser.h">
       <Filter>Файлы заголовков\parser</Filter>
     </ClInclude>
+    <ClInclude Include="node.h">
+      <Filter>Файлы заголовков\parser\atsnode</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -50,6 +56,9 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="test.txt">
+      <Filter>Исходные файлы</Filter>
+    </Text>
+    <Text Include="test2.txt">
       <Filter>Исходные файлы</Filter>
     </Text>
   </ItemGroup>

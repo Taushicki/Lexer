@@ -141,6 +141,7 @@
   <ItemGroup>
     <ClInclude Include="error_handle.h" />
     <ClInclude Include="lexer.h" />
+    <ClInclude Include="node.h" />
     <ClInclude Include="parser.h" />
     <ClInclude Include="token.h" />
   </ItemGroup>
@@ -150,6 +151,7 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="test.txt" />
+    <Text Include="test2.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
