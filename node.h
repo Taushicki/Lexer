@@ -11,6 +11,7 @@ enum class ASTNodeType {
     COMPOUND_STATEMENT_NODE,
     VARIABLE_NODE,
     IDENTIFIER_NODE,
+    PREPROCESSOR_DIRECTIVE_NODE,
     DERECTIVE_INCLUDE_NODE,
     LITERAL_NODE,
 
@@ -78,6 +79,14 @@ public:
 private:
     std::vector<ASTNode*> statements;
 };
+
+//class PreprocessorDirectiveNode : public ASTNode {
+//public:
+//    PreprocessorDirectiveNode(const std::vector<ASTNode*>& statements) : ASTNode(ASTNodeType::PREPROCESSOR_DIRECTIVE_NODE),
+//        statements(statements) {};
+//private:
+//    std::vector<ASTNode*> statements;
+//};
 
 class DerectivIncludeNode : public ASTNode {
 public:

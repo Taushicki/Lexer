@@ -27,12 +27,6 @@ public:
 			case error_handle_type::PARSER:
 				error_begin = "Parser Error!";
 				break;
-			case error_handle_type::SEMANTIC:
-				error_begin = "Semantic Error!";
-				break;
-			case error_handle_type::CODE_GENERATION:
-				error_begin = "Code generation Error!";
-				break;
 		}
 
 		string error_message = error_begin + message;

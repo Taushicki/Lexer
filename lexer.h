@@ -305,6 +305,4 @@ private:
 		}
 		return true;
 	}
-
-	
 };

@@ -108,6 +108,7 @@ enum class token_type {
 
     // Derective
     PREPROCESSOR_DIRECTIVE,
+    DIRECTIVE_INCLUDE,
 
     // Access operator
     ACCESS_OPERATOR, // ::
@@ -283,8 +284,8 @@ private:
         if (lexeme == "*/")
             return token_type::BLOCK_COMMENT_END;
 
-        if (lexeme[0] == '#')
-            return token_type::PREPROCESSOR_DIRECTIVE;
+        if (lexeme == "#include")
+            return token_type::DIRECTIVE_INCLUDE;
 
         if (is_integer(lexeme))
             return token_type::INTEGER_CONST;
@@ -564,9 +565,9 @@ private:
         {
             return "delete";
         }
-        case token_type::PREPROCESSOR_DIRECTIVE:
+        case token_type::DIRECTIVE_INCLUDE:
         {
-            return "preprocessor directive";
+            return "directive include";
         }
         case token_type::ACCESS_OPERATOR:
         {
