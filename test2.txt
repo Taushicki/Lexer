@@ -1,11 +1,22 @@
 #include <iostream>
+#include "parser.h"
 
-int main() {
-    int a = 5;
-    int b = 10;
-    int result = a + b;
+int main(int var1, int var2) {
+    int variable1 = 50;
+    int variable2 = 60 + variable1;
+    
+    if(variable1 > variable2){
+        variable1 = variable1 + 100;
+    }else{
+        variable2 * 10 + 30 / 3;
+    }
+}
 
-    std::cout << "The sum is: " << result << std::endl;
-
-    return 0;
+int is_zero(int var){
+    if(var == 0){
+        return 1;
+    }
+    else{
+        return 0;
+    }
 }

@@ -146,6 +146,7 @@
     <ClInclude Include="token.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="gptParser.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="test.cpp" />
   </ItemGroup>

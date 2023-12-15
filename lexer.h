@@ -3,6 +3,7 @@
 #include "token.h"
 #include <vector>
 #include <fstream>
+#include <stack>
 #include "error_handle.h"
 
 class lexer {
@@ -12,18 +13,19 @@ private:
 	string file_path;
 	string code;	
 
-	vector<token> tokens;
+	
 
 	size_t current_token_index;
 
 public:
-
+	vector<token> tokens;
 
 
 	explicit lexer(const string& file_path) {
 		this->current_token_index = 0;
 		this->file_path = file_path;
 		this->open();
+		this->is_balanced(code);
 		this->split();
 		this->merge();
 		this->check();
@@ -54,6 +56,28 @@ public:
 	}
 
 private:
+
+	static void is_balanced(const std::string& code) {
+		std::stack<char> brackets;
+
+		for (char c : code) {
+			if (c == '(' || c == '[' || c == '{') {
+				brackets.push(c);
+			}
+			else if (c == ')' || c == ']' || c == '}') {
+				if (brackets.empty() ||
+					(c == ')' && brackets.top() != '(') ||
+					(c == ']' && brackets.top() != '[') ||
+					(c == '}' && brackets.top() != '{')) {
+					error_handle::raise(error_handle_type::LEXER, "Missing brackets");
+				}
+				brackets.pop();
+			}
+		}
+		if (!brackets.empty()) {
+			error_handle::raise(error_handle_type::LEXER, "Missing brackets");
+		}
+	}
 
 	static bool is_complex_operator(char symbol1, char symbol2) {
 		switch (symbol1)
@@ -305,4 +329,6 @@ private:
 		}
 		return true;
 	}
+
+	
 };

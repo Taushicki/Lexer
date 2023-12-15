@@ -1,18 +1,15 @@
 #include <iostream>
 
-int main() {
+int main(int var1, int var2) {
 
-	/*Привет мой дорогой друг*/
+	int expression;
 	int new_int1 = 10;
 	int new_int = 1;
 	new_int += 1;
 	double new_double = 2.0;
 	new_double -= 1;
-	bool new_boolean = true;
-	new_boolean = false;
-	char new_char = '"';
-	string new_string = "Hello my \n dear friend";
-	auto new_auto = 10;
+
+	expression = new_int1 + new_int + (1 * 2)
 
 	if (new_int <= 100) {
 		return 0;
