@@ -1,22 +1,20 @@
 #include <iostream>
-#include "parser.h"
 
 int main(int var1, int var2) {
     int variable1 = 50;
     int variable2 = 60 + variable1;
-    
-    if(variable1 > variable2){
-        variable1 = variable1 + 100;
-    }else{
-        variable2 * 10 + 30 / 3;
-    }
-}
 
-int is_zero(int var){
-    if(var == 0){
-        return 1;
+
+
+    if(variable1 > variable2){
+       variable1 = variable2;
     }
     else{
-        return 0;
+       variable2 = variable2 * 10 + 30 / 3;
     }
+
 }
+
+
+
+

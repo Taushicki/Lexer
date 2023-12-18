@@ -10,7 +10,7 @@ class parser
 {
 public:
     parser(const std::vector<token>& tokens) : tokens(tokens), currentTokenIndex(0) {} // Передаём вектор с токенами
-    ASTNode* parse() 
+    ASTNode* parse()
     {
         std::vector<ASTNode*> statements; // Создаём вектор указателей на узлы
 
@@ -39,42 +39,40 @@ private:
                 return variableDeclarationParse();
             }
             else {
-                error_handle::raise(error_handle_type::PARSER, "Identificator expected");
+                error_handle::raise(error_handle_type::PARSER, "Identificator expected.");
                 return nullptr;
             }
         }
         else {
-            error_handle::raise(error_handle_type::PARSER, "Must be inside the function!");
+            error_handle::raise(error_handle_type::PARSER, "Must be inside the function.");
             return nullptr;
         }
-        
+
     }
-    // CAN BE FINALIZED
+    // READY
     ASTNode* preprocessorDirectiveParse() {
         std::string fileName;
         next_token();
-        if (get_token_type() == token_type::LESS && get_token_type_offset(2) == token_type::GREATER) {
-            next_token();
-            fileName = get_token_lexeme();
-            next_token();
-            next_token();
-            return new DerectivIncludeNode(fileName);
-        }
-        else if (get_token_type() == token_type::STRING_CONST) {
-            next_token();
-            fileName = get_token_lexeme().substr(1, fileName.size() - 2);
-            return new DerectivIncludeNode (fileName);
-        }
-        else
-        {
-            error_handle::raise(error_handle_type::PARSER, "Expected file name in <> or in \"\"");
+        if (get_token_type() != token_type::LESS) {
+            error_handle::raise(error_handle_type::PARSER, "Expected file name in <>");
             return nullptr;
         }
+        next_token();
+        fileName = get_token_lexeme();
+        next_token();
+
+        if (get_token_type() != token_type::GREATER) {
+            error_handle::raise(error_handle_type::PARSER, "Expected file name in <>");
+            return nullptr;
+        }
+        next_token();
+        return new DerectivIncludeNode(fileName);
     }
+
     // READY
     ASTNode* expressionParse() {
         ASTNode* leftOperand = primaryExpressionParse();
-
+        
         while (is_binary_operator(get_token_type())) {
             token_type binaryOperator = get_token_type();
             if (binaryOperator == token_type::ASSIGN) {
@@ -86,11 +84,8 @@ private:
                 ASTNode* rightOperand = primaryExpressionParse();
                 leftOperand = new BinaryOperationNode(leftOperand, binaryOperator, rightOperand);
             }
-            
         }
         return leftOperand;
-
-
     }
     // READY
     ASTNode* primaryExpressionParse() {
@@ -98,34 +93,43 @@ private:
 
         if (currentTokenType == token_type::IDENTIFIER) {
             std::string identifier = get_token_lexeme();
-            next_token(); // Переход на ; или ,
+            if (get_token_type() != token_type::ASSIGN) {
+                next_token(); // Пропускаем ;
+            }
             return new IdentifierNode(identifier);
         }
 
         if (currentTokenType == token_type::INTEGER_CONST || currentTokenType == token_type::DOUBLE_CONST) {
             std::string value = get_token_lexeme();
             next_token(); // Переход на операнд;
+            if (get_token_type() == token_type::SEMICOLON) {
+                next_token();
+            }
             return new LiteralNode(value);
         }
-        error_handle::raise(error_handle_type::PARSER, "An identifire or const is exected!!");
+        error_handle::raise(error_handle_type::PARSER, "An identifier or constant is expected.");
         return nullptr;
     }
     // READY
     ASTNode* variableDeclarationParse() {
+        if (get_token_type() == token_type::INT || get_token_type() == token_type::DOUBLE) {
+            next_token();
+        }
 
-        next_token();
         if (get_token_type() != token_type::IDENTIFIER) {
             error_handle::raise(error_handle_type::PARSER, "Expected variable identifier after type.");
             return nullptr;
         }
         std::string variableIdentifire = get_token_lexeme();
         next_token();
+
         if (get_token_type() == token_type::ASSIGN) {
             next_token();
             ASTNode* expression = expressionParse();
             return new VariableDeclarationNode(variableIdentifire, expression);
         }
         return new VariableDeclarationNode(variableIdentifire, nullptr);
+
     }
 
     //READY
@@ -133,7 +137,7 @@ private:
         std::vector<ASTNode*> statements;
 
         if (get_token_type() != token_type::LPAR) {
-            error_handle::raise(error_handle_type::PARSER, "The left bracket is expected!!!");
+            error_handle::raise(error_handle_type::PARSER, "The left bracket is expected.");
             return nullptr;
         }
 
@@ -145,7 +149,7 @@ private:
 
         statements.push_back(variableDeclarationParse());
         if (get_token_type() != token_type::RPAR && get_token_type() != token_type::COMMA) {
-            error_handle::raise(error_handle_type::PARSER, "Check the arguments of the function!!!");
+            error_handle::raise(error_handle_type::PARSER, "Check the arguments of the function.");
             return nullptr;
         }
 
@@ -155,7 +159,7 @@ private:
         }
 
         if (get_token_type() != token_type::RPAR) {
-            error_handle::raise(error_handle_type::PARSER, "The right bracket is expected!!!");
+            error_handle::raise(error_handle_type::PARSER, "The right bracket is expected.");
             return nullptr;
         }
 
@@ -163,23 +167,20 @@ private:
     }
 
     ASTNode* compoundStatementsParse() {
-        
-
         if (get_token_type() != token_type::LBRA) {
-            error_handle::raise(error_handle_type::PARSER, "An left brace is expected");
+            error_handle::raise(error_handle_type::PARSER, "An left brace is expected.");
             return nullptr;
         }
 
         next_token();
         std::vector<ASTNode*> statements;
         while (get_token_type() != token_type::RBRA) {
-            ASTNode* statement = parseStatement();
+            ASTNode* statement = compaundParse();
             if (statement != nullptr) {
                 statements.push_back(statement);
-                if (currentTokenIndex + 1 < tokens.size()) {
+                if (get_token_type() == token_type::SEMICOLON) {
                     next_token();
-                }
-                    
+                }    
             }
         }
 
@@ -187,31 +188,19 @@ private:
             error_handle::raise(error_handle_type::PARSER, "Expected closing curly brace for compound statement.");
             return nullptr;
         }
-
-        if (currentTokenIndex + 1 < tokens.size()) {
-            next_token();
+        next_token();
+        if (statements.empty()) {
+            error_handle::raise(error_handle_type::PARSER, "Compound can't be empty.");
         }
-
         return new CompoundStatementNode(statements);
     }
 
     ASTNode* compaundParse() {
         token_type currentTokenType = get_token_type();
-
-        if (currentTokenType == token_type::INT || currentTokenType == token_type::DOUBLE) {
-            return variableDeclarationParse();
+        if (currentTokenType == token_type::IDENTIFIER && get_token_type_offset(1) == token_type::SEMICOLON) {
+            error_handle::raise(error_handle_type::PARSER, "The identifier cannot be used alone.");
+            return nullptr;
         }
-        else if (currentTokenType == token_type::IF || currentTokenType == token_type::ELSE) {
-            return parseIfElseExpression();
-        }
-        else {
-            // Все остальные случаи считаем выражением
-            return expressionParse();
-        }
-    }
-
-    ASTNode* parseStatement() {
-        token_type currentTokenType = get_token_type();
 
         if (currentTokenType == token_type::INT || currentTokenType == token_type::DOUBLE || currentTokenType == token_type::VOID) {
             // Объявление переменной
@@ -229,16 +218,17 @@ private:
 
     ASTNode* functionDeclarationParse() {
         token_type returnType = get_token_type(); // Тип
+
         next_token(); 
         std::string name = get_token_lexeme(); // Идентификатор
+
         next_token(); // Скобка
         ASTNode* parameters = functionParametersParse(); 
+
         next_token(); // Фигурная скобка
         ASTNode* compounds = compoundStatementsParse(); // Парсинг блока функции
-        next_token();
 
         return new FunctionDeclarationNode(parameters, compounds, name, returnType);
-        
     }
     ASTNode* parseIfElseExpression() {
         next_token(); // Пропускаем "if" или "else"
@@ -249,6 +239,10 @@ private:
         }
 
         next_token();
+        if (get_token_type() == token_type::RPAR) {
+            error_handle::raise(error_handle_type::PARSER, "Condition can't be empty.");
+            return nullptr;
+        }
         ASTNode* condition = expressionParse();
 
         if (get_token_type() != token_type::RPAR) {
@@ -258,7 +252,6 @@ private:
 
         next_token();
         ASTNode* codeBlock = compoundStatementsParse();
-
         // Опциональный блок else
         if (get_token_type() == token_type::ELSE) {
             next_token();
@@ -271,7 +264,7 @@ private:
 
     ASTNode* assignmentStatementParse() {
         // Парсим идентификатор
-        std::string variableIdentifier = get_token_lexeme();
+        std::string variableIdentifier = get_token_lexeme_offset(-1);
         if (get_token_type() == token_type::ASSIGN) {
             next_token();
 
@@ -291,6 +284,9 @@ private:
 
     std::string get_token_lexeme() {
         return tokens[currentTokenIndex].lexeme;
+    }
+    std::string get_token_lexeme_offset(int offset) {
+        return tokens[currentTokenIndex + offset].lexeme;
     }
 
     token_type get_token_type_offset(int offset) {
@@ -312,6 +308,10 @@ private:
     }
     bool is_digit(token_type type) {
         return type == token_type::INT || type == token_type::DOUBLE;
+    }
+
+    bool is_function(token_type type) {
+        return type == token_type::LPAR;
     }
 
 };

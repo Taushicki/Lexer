@@ -258,7 +258,7 @@ private:
         }
         case token_type::SLASH:
         {
-            return "true";
+            return "slash";
         }
         case token_type::INC:
         {
@@ -322,17 +322,7 @@ private:
     int value;
 };
 
-class DoubleVariableNode : public ASTNode {
-public:
-    DoubleVariableNode(std::string name, std::string value) : ASTNode(ASTNodeType::DOUBLE_VARIABLE_NODE),
-        name(name), value(std::stod(value)) {}
-    void print(int indent = 0) const override {
-        std::cout << std::string(indent, ' ') << "DoubleVariableNode: " << name << " = " << value << std::endl;
-    }
-private:
-    std::string name;
-    double value;
-};
+
 
 class LiteralNode : public ASTNode {
 public:
@@ -391,17 +381,7 @@ private:
     ASTNode* elseNode;
 };
 
-class ElseNode : public ASTNode {
-public:
-    ElseNode(ASTNode* statements) : ASTNode(ASTNodeType::ELSE_STATEMENT_NODE),
-        statements(statements) {};
-    void print(int indent = 0) const override {
-        std::cout << std::string(indent, ' ') << "ElseNode:" << std::endl;
-        statements->print(indent + 2);
-    }
-private:
-    ASTNode* statements;
-};
+
 class AssignmentStatementNode : public ASTNode {
 public:
 
