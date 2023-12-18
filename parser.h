@@ -9,16 +9,16 @@
 class parser
 {
 public:
-    parser(const std::vector<token>& tokens) : tokens(tokens), currentTokenIndex(0) {} // Передаём вектор с токенами
+    parser(const std::vector<token>& tokens) : tokens(tokens), currentTokenIndex(0) {}
     ASTNode* parse()
     {
-        std::vector<ASTNode*> statements; // Создаём вектор указателей на узлы
+        std::vector<ASTNode*> statements;
 
-        while (currentTokenIndex < tokens.size()) { //Крутимся до тех пор, пока не закончится вектор токенов
-            statements.push_back(parseStatements()); // На каждой итерации помещем в вектор с узлами новый узел
+        while (currentTokenIndex < tokens.size()) {
+            statements.push_back(parseStatements());
         }
 
-        return new ProgramNode(statements); // В конце получаем ProgramNode который хранит в себе все остальные узлы
+        return new ProgramNode(statements);
     }
 
 private:
@@ -72,14 +72,15 @@ private:
     // READY
     ASTNode* expressionParse() {
         ASTNode* leftOperand = primaryExpressionParse();
-        
+
         while (is_binary_operator(get_token_type())) {
             token_type binaryOperator = get_token_type();
             if (binaryOperator == token_type::ASSIGN) {
-                // Обрабатываем оператор присваивания
+
                 ASTNode* assignment = assignmentStatementParse();
                 leftOperand = assignment;
-            } else {
+            }
+            else {
                 next_token();
                 ASTNode* rightOperand = primaryExpressionParse();
                 leftOperand = new BinaryOperationNode(leftOperand, binaryOperator, rightOperand);
@@ -94,14 +95,14 @@ private:
         if (currentTokenType == token_type::IDENTIFIER) {
             std::string identifier = get_token_lexeme();
             if (get_token_type() != token_type::ASSIGN) {
-                next_token(); // Пропускаем ;
+                next_token();
             }
             return new IdentifierNode(identifier);
         }
 
         if (currentTokenType == token_type::INTEGER_CONST || currentTokenType == token_type::DOUBLE_CONST) {
             std::string value = get_token_lexeme();
-            next_token(); // Переход на операнд;
+            next_token();
             if (get_token_type() == token_type::SEMICOLON) {
                 next_token();
             }
@@ -141,7 +142,7 @@ private:
             return nullptr;
         }
 
-        next_token(); //Скобка или тип
+        next_token();
 
         if (get_token_type() == token_type::RPAR) {
             return nullptr;
@@ -180,7 +181,7 @@ private:
                 statements.push_back(statement);
                 if (get_token_type() == token_type::SEMICOLON) {
                     next_token();
-                }    
+                }
             }
         }
 
@@ -203,35 +204,35 @@ private:
         }
 
         if (currentTokenType == token_type::INT || currentTokenType == token_type::DOUBLE || currentTokenType == token_type::VOID) {
-            // Объявление переменной
+
             return variableDeclarationParse();
         }
         else if (currentTokenType == token_type::IF || currentTokenType == token_type::ELSE) {
-            // Оператор if-else
+
             return parseIfElseExpression();
         }
         else {
-            // Все остальные случаи считаем выражением
+
             return expressionParse();
         }
     }
 
     ASTNode* functionDeclarationParse() {
-        token_type returnType = get_token_type(); // Тип
+        token_type returnType = get_token_type();
 
-        next_token(); 
-        std::string name = get_token_lexeme(); // Идентификатор
+        next_token();
+        std::string name = get_token_lexeme();
 
-        next_token(); // Скобка
-        ASTNode* parameters = functionParametersParse(); 
+        next_token();
+        ASTNode* parameters = functionParametersParse();
 
-        next_token(); // Фигурная скобка
-        ASTNode* compounds = compoundStatementsParse(); // Парсинг блока функции
+        next_token();
+        ASTNode* compounds = compoundStatementsParse();
 
         return new FunctionDeclarationNode(parameters, compounds, name, returnType);
     }
     ASTNode* parseIfElseExpression() {
-        next_token(); // Пропускаем "if" или "else"
+        next_token();
 
         if (get_token_type() != token_type::LPAR) {
             error_handle::raise(error_handle_type::PARSER, "Expected opening parenthesis after if/else.");
@@ -252,7 +253,7 @@ private:
 
         next_token();
         ASTNode* codeBlock = compoundStatementsParse();
-        // Опциональный блок else
+
         if (get_token_type() == token_type::ELSE) {
             next_token();
             ASTNode* elseBlock = compoundStatementsParse();
@@ -263,12 +264,12 @@ private:
     }
 
     ASTNode* assignmentStatementParse() {
-        // Парсим идентификатор
+
         std::string variableIdentifier = get_token_lexeme_offset(-1);
         if (get_token_type() == token_type::ASSIGN) {
             next_token();
 
-            // Парсим выражение
+
             ASTNode* expression = expressionParse();
             return new AssignmentStatementNode(new IdentifierNode(variableIdentifier), expression);
         }

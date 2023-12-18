@@ -7,8 +7,6 @@ using namespace std;
 enum class error_handle_type {
 	LEXER,
 	PARSER,
-	SEMANTIC,
-	CODE_GENERATION
 };
 
 
