@@ -43,7 +43,7 @@ public:
     void print(int indent = 0) const override {
         std::cout << std::string(indent, ' ') << "ProgramNode:" << std::endl;
         for (const auto& statement : statements) {
-            statement->print(indent + 2);
+            statement->print(indent + 4);
         }
     }
 
@@ -67,13 +67,13 @@ private:
 
 class FunctionDeclarationNode : public ASTNode {
 public:
-    FunctionDeclarationNode(ASTNode* parameterListNode, ASTNode* compoundStatementNode, std::string name, token_type returnType) : ASTNode(ASTNodeType::FUNCTION_DECLARATION_NODE),
+    FunctionDeclarationNode(ASTNode* parameterListNode, ASTNode* compoundStatementNode,  std::string name, token_type returnType) : ASTNode(ASTNodeType::FUNCTION_DECLARATION_NODE),
         parameterListNode(parameterListNode), compoundStatementNode(compoundStatementNode), name(name), returnType(returnType) {}
 
     void print(int indent = 0) const override {
         std::cout << std::string(indent, ' ') << "FunctionDeclarationNode: " << name << std::endl;
-        parameterListNode->print(indent + 2);
-        compoundStatementNode->print(indent + 2);
+        parameterListNode->print(indent + 4);
+        compoundStatementNode->print(indent + 4);
     }
 
 private:
@@ -90,7 +90,7 @@ public:
     void print(int indent = 0) const override {
         std::cout << std::string(indent, ' ') << "ParameterListNode:" << std::endl;
         for (const auto& statement : statements) {
-            statement->print(indent + 2);
+            statement->print(indent + 4);
         }
     }
 private:
@@ -105,7 +105,7 @@ public:
     void print(int indent = 0) const override {
         std::cout << std::string(indent, ' ') << "CompoundStatementNode:" << std::endl;
         for (const auto& statement : statements) {
-            statement->print(indent + 2);
+            statement->print(indent + 4);
         }
     }
 private:
@@ -114,11 +114,19 @@ private:
 
 class ReturnStatementNode : public ASTNode {
 public:
-    ReturnStatementNode(ASTNode* node) : ASTNode(ASTNodeType::RETURN_STATEMENT_NODE),
-        node(node) {};
+    ReturnStatementNode(ASTNode* expressionNode) : ASTNode(ASTNodeType::RETURN_STATEMENT_NODE),
+        expressionNode(expressionNode) {};
 
+    void print(int indent = 0) const override {
+        std::cout << std::string(indent, ' ') << "ReturnStatementNode: ";
+        if (expressionNode != nullptr) {
+            expressionNode->print();
+        } else {
+            std::cout << "null\n";
+        }
+    }
 private:
-    ASTNode* node;
+    ASTNode* expressionNode;
 };
 
 class BinaryOperationNode : public ASTNode {
@@ -128,91 +136,28 @@ public:
 
     void print(int indent = 0) const override {
         std::cout << std::string(indent, ' ') << "BinaryOperationNode: " << token_type_to_string(op) << std::endl;
-        leftOperand->print(indent + 2);
-        rightOperand->print(indent + 2);
+        leftOperand->print(indent + 4);
+        rightOperand->print(indent + 4);
     }
 private:
     std::string token_type_to_string(token_type type) const {
-        switch (type)
-        {
-        case token_type::GREATER:
-        {
-            return ">";
-        }
-        case token_type::LESS_EQUAL:
-        {
-            return "<=";
-        }
-        case token_type::GREATER_EQUAL:
-        {
-            return ">=";
-        }
-        case token_type::EQUAL:
-        {
-            return "==";
-        }
-        case token_type::NOT_EQUAL:
-        {
-            return "!=";
-        }
-        case token_type::AND:
-        {
-            return "&&";
-        }
-        case token_type::OR:
-        {
-            return "||";
-        }
-        case token_type::EXCLAMATION:
-        {
-            return "exclamation";
-        }
-        case token_type::PLUS:
-        {
-            return "+";
-        }
-        case token_type::MINUS:
-        {
-            return "-";
-        }
-        case token_type::STAR:
-        {
-            return "*";
-        }
-        case token_type::SLASH:
-        {
-            return "/";
-        }
-        case token_type::INC:
-        {
-            return "--";
-        }
-        case token_type::DEC:
-        {
-            return "++";
-        }
-        case token_type::ASSIGN:
-        {
-            return "=";
-        }
-        case token_type::ADD_ASSIGN:
-        {
-            return "+=";
-        }
-        case token_type::SUB_ASSIGN:
-        {
-            return "-=";
-        }
-        case token_type::MUL_ASSIGN:
-        {
-            return "*=";
-        }
-        case token_type::DIV_ASSIGN:
-        {
-            return "/=";
-        }
-        }
+    switch (type) {
+        case token_type::PLUS: return "+";
+        case token_type::MINUS: return "-";
+        case token_type::STAR: return "*";
+        case token_type::SLASH: return "/";
+        case token_type::EQUAL: return "==";
+        case token_type::LESS: return "<";
+        case token_type::GREATER: return ">";
+        case token_type::LESS_EQUAL: return "<=";
+        case token_type::GREATER_EQUAL: return ">=";
+        case token_type::NOT_EQUAL: return "!=";
+        case token_type::AND: return "&&";
+        case token_type::OR: return "||";
+        case token_type::ASSIGN: return "=";
+        default: return "Unknown";
     }
+}
 
     ASTNode* leftOperand;
     token_type op;
@@ -227,7 +172,7 @@ public:
     void print(int indent = 0) const override {
         std::cout << std::string(indent, ' ') << "VariableDeclarationNode: " << name << std::endl;
         if (value != nullptr) {
-            value->print(indent + 2);
+            value->print(indent + 4);
         }
     }
 private:
@@ -268,8 +213,8 @@ public:
 
     void print(int indent = 0) const override {
         std::cout << std::string(indent, ' ') << "IfNode:" << std::endl;
-        condition->print(indent + 2);
-        statements->print(indent + 2);
+        condition->print(indent + 4);
+        statements->print(indent + 4);
     }
 private:
     ASTNode* condition;
@@ -284,10 +229,10 @@ public:
 
     void print(int indent = 0) const override {
         std::cout << std::string(indent, ' ') << "ElseIFNode:" << std::endl;
-        condition->print(indent + 2);
-        statements->print(indent + 2);
+        condition->print(indent + 4);
+        statements->print(indent + 4);
         if (elseNode != nullptr) {
-            elseNode->print(indent + 2);
+            elseNode->print(indent + 4);
         }
     }
 private:
@@ -305,8 +250,8 @@ public:
 
     void print(int indent = 0) const override {
         std::cout << std::string(indent, ' ') << "AssignmentStatementNode:" << std::endl;
-        variable->print(indent + 2);
-        value->print(indent + 2);
+        variable->print(indent + 4);
+        value->print(indent + 4);
     }
 private:
     IdentifierNode* variable;

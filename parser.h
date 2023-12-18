@@ -10,8 +10,7 @@ class parser
 {
 public:
     parser(const std::vector<token>& tokens) : tokens(tokens), currentTokenIndex(0) {}
-    ASTNode* parse()
-    {
+    ASTNode* parse() {
         std::vector<ASTNode*> statements;
 
         while (currentTokenIndex < tokens.size()) {
@@ -47,7 +46,6 @@ private:
             error_handle::raise(error_handle_type::PARSER, "Must be inside the function.");
             return nullptr;
         }
-
     }
     // READY
     ASTNode* preprocessorDirectiveParse() {
@@ -122,14 +120,9 @@ private:
 
         if (currentTokenType == token_type::IDENTIFIER) {
             std::string identifier = get_token_lexeme();
-            next_token();
-
-            if (get_token_type() == token_type::ASSIGN) {
+            if (get_token_type() != token_type::ASSIGN) {
                 next_token();
-                ASTNode* expression = expressionParse();
-                return new AssignmentStatementNode(new IdentifierNode(identifier), expression);
             }
-
             return new IdentifierNode(identifier);
         }
 
@@ -141,7 +134,21 @@ private:
             }
             return new LiteralNode(value);
         }
-        error_handle::raise(error_handle_type::PARSER, "An identifier or constant is expected.");
+
+        if (currentTokenType == token_type::LPAR) {
+            next_token();
+            ASTNode* expressionInsideParentheses = expressionParse();
+
+            if (get_token_type() != token_type::RPAR) {
+                error_handle::raise(error_handle_type::PARSER, "Expected closing parenthesis.");
+                return nullptr;
+            }
+
+            next_token();
+            return expressionInsideParentheses;
+        }
+
+        error_handle::raise(error_handle_type::PARSER, "An identifier, constant, or expression in parentheses is expected.");
         return nullptr;
     }
     // READY
@@ -199,7 +206,7 @@ private:
 
         return new ParameterListNode(statements);
     }
-
+    // READY
     ASTNode* compoundStatementsParse() {
         if (get_token_type() != token_type::LBRA) {
             error_handle::raise(error_handle_type::PARSER, "An left brace is expected.");
@@ -228,7 +235,7 @@ private:
         }
         return new CompoundStatementNode(statements);
     }
-
+    // READY
     ASTNode* compaundParse() {
         token_type currentTokenType = get_token_type();
         if (currentTokenType == token_type::IDENTIFIER && get_token_type_offset(1) == token_type::SEMICOLON) {
@@ -244,12 +251,15 @@ private:
 
             return parseIfElseExpression();
         }
+        else if (currentTokenType == token_type::RETURN){
+            return parseReturnStatement(); 
+        }
         else {
 
             return expressionParse();
         }
     }
-
+    // READY
     ASTNode* functionDeclarationParse() {
         token_type returnType = get_token_type();
 
@@ -261,9 +271,9 @@ private:
 
         next_token();
         ASTNode* compounds = compoundStatementsParse();
-
         return new FunctionDeclarationNode(parameters, compounds, name, returnType);
     }
+    // READY
     ASTNode* parseIfElseExpression() {
         next_token();
 
@@ -296,6 +306,16 @@ private:
         return new IfNode(condition, codeBlock);
     }
 
+    ASTNode* parseReturnStatement(){
+        next_token();
+        if (get_token_type() != token_type::IDENTIFIER && get_token_type() != token_type::INTEGER_CONST && get_token_type() != token_type::DOUBLE_CONST){
+            error_handle::raise(error_handle_type::PARSER, "Probably the return value.");
+        }
+        ASTNode* expression = expressionParse();
+        next_token();
+        return new ReturnStatementNode(expression);
+    }
+    // READY
     ASTNode* assignmentStatementParse() {
 
         std::string variableIdentifier = get_token_lexeme_offset(-1);
@@ -312,6 +332,7 @@ private:
         }
 
     }
+
     token_type get_token_type() {
         return tokens[currentTokenIndex].type;
     }
@@ -319,6 +340,7 @@ private:
     std::string get_token_lexeme() {
         return tokens[currentTokenIndex].lexeme;
     }
+
     std::string get_token_lexeme_offset(int offset) {
         return tokens[currentTokenIndex + offset].lexeme;
     }
@@ -340,6 +362,7 @@ private:
             type == token_type::AND || type == token_type::OR ||
             type == token_type::ASSIGN;
     }
+
     bool is_digit(token_type type) {
         return type == token_type::INT || type == token_type::DOUBLE;
     }
@@ -373,5 +396,4 @@ private:
             return 0;
         }
     }
-
 };

@@ -5,10 +5,10 @@
 
 
 int main() {
-	
+
 	try {
 		lexer lex("test.txt");
-
+        // lex.print();
 		parser pars(lex.tokens);
 		ASTNode* root = pars.parse();
 
