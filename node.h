@@ -28,10 +28,6 @@ class ASTNode {
 public:
     explicit ASTNode(ASTNodeType type) : type(type) {}
 
-    ASTNodeType getType() const {
-        return type;
-    }
-
     virtual void print(int indent = 0) const = 0;
 
 private:
@@ -43,9 +39,6 @@ public:
     ProgramNode(const std::vector<ASTNode*>& statements) : ASTNode(ASTNodeType::PROGRAM_NODE),
         statements(statements) {}
 
-    const std::vector<ASTNode*>& getStatements() const {
-        return statements;
-    }
 
     void print(int indent = 0) const override {
         std::cout << std::string(indent, ' ') << "ProgramNode:" << std::endl;
@@ -108,6 +101,7 @@ class CompoundStatementNode : public ASTNode {
 public:
     CompoundStatementNode(const std::vector<ASTNode*>& statements) : ASTNode(ASTNodeType::COMPOUND_STATEMENTS_NODE),
         statements(statements) {}
+
     void print(int indent = 0) const override {
         std::cout << std::string(indent, ' ') << "CompoundStatementNode:" << std::endl;
         for (const auto& statement : statements) {
@@ -229,6 +223,7 @@ class VariableDeclarationNode : public ASTNode {
 public:
     VariableDeclarationNode(std::string name, ASTNode* value) : ASTNode(ASTNodeType::VARIABLE_NODE),
         name(name), value(value) {};
+
     void print(int indent = 0) const override {
         std::cout << std::string(indent, ' ') << "VariableDeclarationNode: " << name << std::endl;
         if (value != nullptr) {
@@ -244,6 +239,7 @@ class LiteralNode : public ASTNode {
 public:
     LiteralNode(std::string value) : ASTNode(ASTNodeType::LITERAL_NODE),
         value(value) {};
+
     void print(int indent = 0) const override {
         std::cout << std::string(indent, ' ') << "LiteralNode: " << value << std::endl;
     }
@@ -256,6 +252,7 @@ class IdentifierNode : public ASTNode {
 public:
     IdentifierNode(std::string identifier) : ASTNode(ASTNodeType::IDENTIFIER_NODE),
         identifier(identifier) {};
+
     void print(int indent = 0) const override {
         std::cout << std::string(indent, ' ') << "IdentifierNode: " << identifier << std::endl;
     }
@@ -268,6 +265,7 @@ class IfNode : public ASTNode {
 public:
     IfNode(ASTNode* condition, ASTNode* statements) : ASTNode(ASTNodeType::IF_STATEMENT_NODE),
         condition(condition), statements(statements) {};
+
     void print(int indent = 0) const override {
         std::cout << std::string(indent, ' ') << "IfNode:" << std::endl;
         condition->print(indent + 2);
@@ -283,6 +281,7 @@ class ElseIFNode : public ASTNode {
 public:
     ElseIFNode(ASTNode* condition, ASTNode* statements, ASTNode* elseNode) : ASTNode(ASTNodeType::ELSE_IF_STATEMENT_NODE),
         condition(condition), statements(statements), elseNode(elseNode) {};
+
     void print(int indent = 0) const override {
         std::cout << std::string(indent, ' ') << "ElseIFNode:" << std::endl;
         condition->print(indent + 2);
@@ -303,6 +302,7 @@ public:
 
     AssignmentStatementNode(IdentifierNode* variable, ASTNode* value) : ASTNode(ASTNodeType::ASSIGMENT_NODE),
         variable(variable), value(value) {}
+
     void print(int indent = 0) const override {
         std::cout << std::string(indent, ' ') << "AssignmentStatementNode:" << std::endl;
         variable->print(indent + 2);

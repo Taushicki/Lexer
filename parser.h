@@ -71,22 +71,50 @@ private:
 
     // READY
     ASTNode* expressionParse() {
-        ASTNode* leftOperand = primaryExpressionParse();
+        std::stack<ASTNode*> operands;
+        std::stack<token_type> operators;
+
+        ASTNode* currentOperand = primaryExpressionParse();
+        operands.push(currentOperand);
 
         while (is_binary_operator(get_token_type())) {
-            token_type binaryOperator = get_token_type();
-            if (binaryOperator == token_type::ASSIGN) {
+            token_type currentOperator = get_token_type();
 
-                ASTNode* assignment = assignmentStatementParse();
-                leftOperand = assignment;
+            while (!operators.empty() && get_operator_precedence(operators.top()) >= get_operator_precedence(currentOperator)) {
+
+                ASTNode* rightOperand = operands.top();
+                operands.pop();
+
+                ASTNode* leftOperand = operands.top();
+                operands.pop();
+
+                ASTNode* newExpression = new BinaryOperationNode(leftOperand, operators.top(), rightOperand);
+                operands.push(newExpression);
+
+                operators.pop();
             }
-            else {
-                next_token();
-                ASTNode* rightOperand = primaryExpressionParse();
-                leftOperand = new BinaryOperationNode(leftOperand, binaryOperator, rightOperand);
-            }
+
+            operators.push(currentOperator);
+            next_token();
+
+            currentOperand = primaryExpressionParse();
+            operands.push(currentOperand);
         }
-        return leftOperand;
+
+        while (!operators.empty()) {
+            ASTNode* rightOperand = operands.top();
+            operands.pop();
+
+            ASTNode* leftOperand = operands.top();
+            operands.pop();
+
+            ASTNode* newExpression = new BinaryOperationNode(leftOperand, operators.top(), rightOperand);
+            operands.push(newExpression);
+
+            operators.pop();
+        }
+
+        return operands.top();
     }
     // READY
     ASTNode* primaryExpressionParse() {
@@ -94,9 +122,14 @@ private:
 
         if (currentTokenType == token_type::IDENTIFIER) {
             std::string identifier = get_token_lexeme();
-            if (get_token_type() != token_type::ASSIGN) {
+            next_token();
+
+            if (get_token_type() == token_type::ASSIGN) {
                 next_token();
+                ASTNode* expression = expressionParse();
+                return new AssignmentStatementNode(new IdentifierNode(identifier), expression);
             }
+
             return new IdentifierNode(identifier);
         }
 
@@ -313,6 +346,32 @@ private:
 
     bool is_function(token_type type) {
         return type == token_type::LPAR;
+    }
+
+    int get_operator_precedence(token_type type) {
+        switch (type) {
+        case token_type::ASSIGN:
+            return 1;
+        case token_type::OR:
+            return 2;
+        case token_type::AND:
+            return 3;
+        case token_type::EQUAL:
+        case token_type::NOT_EQUAL:
+        case token_type::LESS:
+        case token_type::LESS_EQUAL:
+        case token_type::GREATER:
+        case token_type::GREATER_EQUAL:
+            return 4;
+        case token_type::PLUS:
+        case token_type::MINUS:
+            return 5;
+        case token_type::STAR:
+        case token_type::SLASH:
+            return 6;
+        default:
+            return 0;
+        }
     }
 
 };
