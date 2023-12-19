@@ -222,13 +222,13 @@ private:
 
 };
 
-class ElseIFNode : public ASTNode {
+class IFElseNode : public ASTNode {
 public:
-    ElseIFNode(ASTNode* condition, ASTNode* statements, ASTNode* elseNode) : ASTNode(ASTNodeType::ELSE_IF_STATEMENT_NODE),
+    IFElseNode(ASTNode* condition, ASTNode* statements, ASTNode* elseNode) : ASTNode(ASTNodeType::ELSE_IF_STATEMENT_NODE),
         condition(condition), statements(statements), elseNode(elseNode) {};
 
     void print(int indent = 0) const override {
-        std::cout << std::string(indent, ' ') << "ElseIFNode:" << std::endl;
+        std::cout << std::string(indent, ' ') << "IFElseNode:" << std::endl;
         condition->print(indent + 4);
         statements->print(indent + 4);
         if (elseNode != nullptr) {

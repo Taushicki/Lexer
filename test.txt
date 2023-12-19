@@ -8,10 +8,24 @@ int main(int var1, int var2) {
 
    if(variable1 != variable2){
       variable1 = variable2;
-      return variable1;
+      return 0;
    }
    else{
       variable2 = variable2 * (10 + 30) / 3;
+      return 1;
    }
-   return 0;
+
+   if(variable1 != variable1){
+      return 0;
+   }
+}
+
+int main(int var1, int var2) {
+   int variable1 = 50;
+   int variable2 = 60 * (variable1 + 20);
+
+
+   if(variable1 != variable1){
+      return 0;
+   }
 }

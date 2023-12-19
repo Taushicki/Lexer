@@ -300,7 +300,7 @@ private:
         if (get_token_type() == token_type::ELSE) {
             next_token();
             ASTNode* elseBlock = compoundStatementsParse();
-            return new ElseIFNode(condition, codeBlock, elseBlock);
+            return new IFElseNode(condition, codeBlock, elseBlock);
         }
 
         return new IfNode(condition, codeBlock);
@@ -312,7 +312,6 @@ private:
             error_handle::raise(error_handle_type::PARSER, "Probably the return value.");
         }
         ASTNode* expression = expressionParse();
-        next_token();
         return new ReturnStatementNode(expression);
     }
     // READY
